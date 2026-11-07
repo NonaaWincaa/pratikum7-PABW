@@ -13,22 +13,24 @@ class LoginController extends Controller
     }
 
     public function login(Request $request)
-{
-    $credentials = $request->validate([
-        'email'    => 'required|email',
-        'password' => 'required',
-    ]);
+    {
+        $credentials = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required',
+        ]);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        // Ubah laporan.index menjadi laporbanjir.index
-        return redirect()->intended(route('laporbanjir.index'));
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            // Arahkan ke daftar laporan
+            return redirect()->route('laporan.index')->with('success', 'Login berhasil!');
+        }
+
+        // Kode ini akan berjalan jika email/password salah
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ])->onlyInput('email');
     }
 
-    return back()->withErrors([
-        'email' => 'Email atau password salah.',
-    ])->onlyInput('email');
-}
     public function logout(Request $request)
     {
         Auth::logout();

@@ -2,27 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
-use App\Http\Controllers\LaporBanjirController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
-use Illuminate\Support\Facades\Auth;
 
-// --- ROUTE PUBLIK (Bisa diakses tanpa login) ---
-
-// Redirect halaman utama ke form lapor banjir (agar warga langsung melihat form)
 Route::get('/', function () {
-    return redirect()->route('laporbanjir.form');
+    return redirect()->route('laporan.create');
 });
 
-// Form Pelaporan & Proses Simpan (Akses Warga)
-Route::get('/lapor', [LaporBanjirController::class, 'form'])->name('laporbanjir.form');
-Route::post('/lapor', [LaporBanjirController::class, 'simpan'])->name('laporbanjir.store');
+Route::get('/lapor', [LaporanController::class, 'create'])->name('laporan.create');
+Route::post('/lapor', [LaporanController::class, 'store'])->name('laporan.store');
 
-// Route Praktikum Students
 Route::get('/students', [StudentController::class, 'index'])->name('students.index');
 
-
-// --- ROUTE AUTHENTICATION (Guest Only) ---
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);
@@ -31,16 +23,15 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
 });
 
-
 // --- ROUTE TERPROTEKSI (Wajib Login Petugas) ---
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    // Pengelolaan / Daftar Laporan (Hanya Petugas)
-    Route::get('/daftar-laporan', [LaporBanjirController::class, 'daftar'])->name('laporbanjir.index');
+    // Pengelolaan Laporan (Hanya Petugas)
+    Route::resource('laporan', LaporanController::class)->except(['create', 'store']);
 
-    // Profil Petugas BPBD
+    // Profil Petugas
     Route::get('/profil', function () {
         return view('petugas.profil');
     })->name('petugas.profil');

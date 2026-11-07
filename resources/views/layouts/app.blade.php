@@ -29,14 +29,14 @@
     <!-- Header / Navbar Soft Blue -->
     <header class="bg-softBlueHeader text-white shadow-sm sticky top-0 z-50">
         <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="{{ route('laporbanjir.form') }}" class="flex items-center gap-2 font-bold text-sm tracking-wide hover:opacity-90 transition">
+            <a href="{{ route('laporan.create') }}" class="flex items-center gap-2 font-bold text-sm tracking-wide hover:opacity-90 transition">
                 <i class="fa-solid fa-triangle-exclamation text-sky-300 text-lg"></i>
                 <span>BPBD LaporBanjir</span>
             </a>
 
             <nav class="flex items-center gap-2 text-xs font-medium">
                 <!-- Menu Publik (Bisa diakses tanpa login) -->
-                <a href="{{ route('laporbanjir.form') }}" class="px-3 py-1.5 rounded-md hover:bg-blue-800 transition flex items-center gap-1.5">
+                <a href="{{ route('laporan.create') }}" class="px-3 py-1.5 rounded-md hover:bg-blue-800 transition flex items-center gap-1.5">
                     <i class="fa-solid fa-pen-to-square text-sky-300"></i> Buat Laporan
                 </a>
                 <a href="{{ route('students.index') }}" class="px-3 py-1.5 rounded-md hover:bg-blue-800 transition flex items-center gap-1.5 border border-sky-400/30">
@@ -45,7 +45,7 @@
 
                 @auth
                     <!-- Tampil HANYA jika Petugas SUDAH Login -->
-                    <a href="{{ route('laporbanjir.index') }}" class="px-3 py-1.5 rounded-md hover:bg-blue-800 transition flex items-center gap-1.5">
+                    <a href="{{ route('laporan.index') }}" class="px-3 py-1.5 rounded-md hover:bg-blue-800 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-list-check text-sky-300"></i> Daftar Laporan
                     </a>
                     <a href="{{ route('petugas.profil') }}" class="px-3 py-1.5 rounded-md hover:bg-blue-800 transition flex items-center gap-1.5">

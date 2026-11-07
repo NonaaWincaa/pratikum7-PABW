@@ -3,99 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Mahasiswa - Praktikum Laravel</title>
-    <!-- CDN Tailwind CSS & FontAwesome -->
+    <title>Daftar Laporan Banjir</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        emeraldCustom: '#0A6B52',
-                        goldCustom: '#C69968',
-                        creamCustom: '#F9F3DC',
-                        lavenderCustom: '#EDE7F6',
-                        lavenderText: '#5E35B1',
-                    }
-                }
-            }
+            theme: { extend: { colors: { babyBlue: '#89CFF0', softCream: '#F9F3DC', softBrown: '#BCA38F' } } }
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-creamCustom/40 font-sans text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+<body class="bg-softCream font-sans text-slate-800 antialiased min-h-screen">
 
-    <!-- Header / Navbar Compact -->
-    <header class="bg-emeraldCustom text-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-graduation-cap text-goldCustom text-xl"></i>
-                <span class="font-bold text-base tracking-wide">Praktikum Laravel</span>
+    <header class="bg-babyBlue text-slate-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="font-bold text-lg flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved"></i> Panel Petugas BPBD
             </div>
-            <span class="bg-lavenderCustom text-lavenderText text-xs font-semibold px-2.5 py-1 rounded-md border border-lavenderText/20">
-                Mahasiswa
-            </span>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="text-sm font-semibold bg-white/50 px-4 py-1.5 rounded-lg hover:bg-white transition">Logout</button>
+            </form>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
-        <div class="space-y-4">
-            <!-- Header Title -->
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-users text-emeraldCustom"></i>
-                        Daftar Mahasiswa
-                    </h2>
-                    <p class="text-xs text-slate-500">Data mahasiswa terdaftar di database.</p>
-                </div>
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        @if (session('success'))
+            <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm font-medium">
+                {{ session('success') }}
             </div>
+        @endif
 
-            <!-- Tabel Data Mahasiswa Compact -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-emeraldCustom text-white uppercase text-[11px] font-semibold tracking-wider">
-                                <th class="py-2.5 px-4">ID</th>
-                                <th class="py-2.5 px-4">Nama</th>
-                                <th class="py-2.5 px-4">Email / NIM</th>
-                                <th class="py-2.5 px-4">Jurusan</th>
-                                <th class="py-2.5 px-4 text-center">Umur</th>
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 uppercase text-[11px] font-semibold border-b border-slate-200">
+                            <th class="py-3 px-4">Tanggal</th>
+                            <th class="py-3 px-4">Pelapor</th>
+                            <th class="py-3 px-4">Lokasi</th>
+                            <th class="py-3 px-4 text-center">Air (cm)</th>
+                            <th class="py-3 px-4 text-center">Foto</th>
+                            <th class="py-3 px-4 text-center">Status</th>
+                            <th class="py-3 px-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse($laporan as $item)
+                            <tr class="hover:bg-softCream/30">
+                                <td class="py-3 px-4 text-xs font-mono text-slate-500">{{ $item->created_at->format('d/m/Y') }}</td>
+                                <td class="py-3 px-4 font-bold">{{ $item->nama_pelapor }}</td>
+                                <td class="py-3 px-4 text-xs">{{ $item->kecamatan }}</td>
+                                <td class="py-3 px-4 text-center font-bold text-red-500">{{ $item->tinggi_air }}</td>
+                                <td class="py-3 px-4 text-center">
+                                    <img src="{{ asset('storage/' . $item->foto) }}" class="h-10 w-10 object-cover rounded mx-auto border" alt="Bukti">
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    <span class="px-2 py-1 rounded text-[10px] font-bold 
+                                        {{ $item->status == 'Menunggu' ? 'bg-slate-100 text-slate-600' : ($item->status == 'Diproses' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700') }}">
+                                        {{ $item->status }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 text-center flex justify-center gap-2">
+                                    <a href="{{ route('laporan.show', $item->id) }}" class="bg-babyBlue text-slate-800 p-1.5 rounded text-xs"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="{{ route('laporan.edit', $item->id) }}" class="bg-softBrown text-white p-1.5 rounded text-xs"><i class="fa-solid fa-pen"></i></a>
+                                    <form action="{{ route('laporan.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus laporan?');">
+                                        @csrf @method('DELETE')
+                                        <button class="bg-red-500 text-white p-1.5 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 text-slate-700">
-                            @forelse($mahasiswa as $mhs)
-                                <tr class="hover:bg-creamCustom/50 transition duration-150">
-                                    <td class="py-2.5 px-4 font-mono font-semibold text-slate-500">{{ $mhs->id }}</td>
-                                    <td class="py-2.5 px-4 font-bold text-slate-800">{{ $mhs->nama }}</td>
-                                    <td class="py-2.5 px-4 text-slate-600">{{ $mhs->email ?? $mhs->nim }}</td>
-                                    <td class="py-2.5 px-4">
-                                        <span class="bg-lavenderCustom text-lavenderText text-[11px] font-medium px-2 py-0.5 rounded-md border border-purple-200">
-                                            {{ $mhs->jurusan }}
-                                        </span>
-                                    </td>
-                                    <td class="py-2.5 px-4 text-center font-medium">{{ $mhs->umur ?? '-' }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="py-6 text-center text-slate-400 italic">
-                                        Belum ada data mahasiswa.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        @empty
+                            <tr><td colspan="7" class="py-6 text-center text-slate-400">Belum ada data.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
+            <!-- Pagination (Ketentuan d) -->
+            <div class="p-4 border-t border-slate-100">{{ $laporan->links() }}</div>
         </div>
     </main>
-
-    <!-- Footer Compact -->
-    <footer class="bg-slate-900 text-slate-400 py-3 text-center text-xs border-t border-slate-800">
-        <p>&copy; {{ date('Y') }} Praktikum Laravel. All rights reserved.</p>
-    </footer>
-
 </body>
 </html>

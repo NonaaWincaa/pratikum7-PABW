@@ -31,6 +31,6 @@ class RegisterController extends Controller
     Auth::login($user);
 
     // Ubah laporan.index menjadi laporbanjir.index
-    return redirect()->route('laporbanjir.index')->with('success', 'Registrasi berhasil!');
+    return redirect()->route('laporan.index')->with('success', 'Registrasi berhasil!');
     }
 }
